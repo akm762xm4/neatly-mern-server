@@ -1,22 +1,25 @@
-import express from "express"
+import express from "express";
 import {
   createNote,
   deleteNote,
   getNote,
   getNotes,
+  togglePin,
   updateNote,
-} from "../controllers/NotesControllers"
+} from "../controllers/NotesControllers";
 
-const router = express.Router()
+const router = express.Router();
 
-router.get("/", getNotes)
+router.get("/", getNotes);
 
-router.get("/:noteId", getNote)
+router.get("/:noteId", getNote);
 
-router.post("/", createNote)
+router.post("/", createNote);
 
-router.patch("/:noteId", updateNote)
+router.patch("/:noteId", updateNote);
 
-router.delete("/:noteId", deleteNote)
+router.patch("/:noteId/pin", togglePin);
 
-export default router
+router.delete("/:noteId", deleteNote);
+
+export default router;
