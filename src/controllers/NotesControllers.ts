@@ -77,7 +77,7 @@ export const updateNote = async (
       throw createHttpError(400, "Invalid note ID");
     }
 
-    if (!newTitle?.trim()) {
+    if (!newTitle?.trim().length) {
       throw createHttpError(400, "Note must have a title");
     }
 
@@ -88,7 +88,7 @@ export const updateNote = async (
     }
 
     // ✅ Allow only owner to update
-    if (note.userId.toString() !== req.user._id) {
+    if (note.userId.toString() !== req.user._id.toString()) {
       throw createHttpError(403, "You are not authorized to edit this note");
     }
 
