@@ -9,7 +9,10 @@ import cors from "cors";
 import createHttpError, { isHttpError } from "http-errors";
 
 const corsOptions = {
-  origin: ["localhost:3000", "https://notes-mern-client.vercel.app"],
+  origin: [
+    "http://localhost:3000", // ✅ Note the http://
+    "https://notes-mern-client.vercel.app", // ✅ For production client
+  ],
   credentials: true,
 };
 
