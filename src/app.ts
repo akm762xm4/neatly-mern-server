@@ -11,7 +11,7 @@ import createHttpError, { isHttpError } from "http-errors";
 const corsOptions = {
   origin: [
     "http://localhost:3000", // ✅ Note the http://
-    "https://notes-mern-client.vercel.app", // ✅ For production client
+    "https://neatly-mern-client.vercel.app", // ✅ For production client
   ],
   credentials: true,
 };
