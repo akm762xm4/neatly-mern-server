@@ -37,5 +37,8 @@
     "mongoose": "^8.0.0",
     "morgan": "^1.10.0",
     "vercel": "^44.4.1"
+  },
+  "engines": {
+    "node": "22.x"
   }
 }
