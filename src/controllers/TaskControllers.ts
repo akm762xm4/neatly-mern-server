@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import mongoose from "mongoose";
+import { isValidObjectId } from "mongoose";
 import createHttpError from "http-errors";
 import TaskModel from "../models/Task";
 
@@ -10,7 +10,7 @@ export const getTasks = async (
   next: NextFunction
 ) => {
   try {
-    const tasks = await TaskModel.find({ userId: req.user._id }).sort({
+    const tasks = await TaskModel.find({ userId: req.user.userId }).sort({
       createdAt: -1,
     });
     res.status(200).json(tasks);
@@ -31,7 +31,7 @@ export const createTask = async (
     if (!title) throw createHttpError(400, "Task must have a title");
 
     const task = await TaskModel.create({
-      userId: req.user._id,
+      userId: req.user.userId,
       title,
       description: description,
       dueDate,
@@ -54,14 +54,14 @@ export const updateTask = async (
   const taskId = req.params.taskId;
 
   try {
-    if (!mongoose.isValidObjectId(taskId)) {
+    if (!isValidObjectId(taskId)) {
       throw createHttpError(400, "Invalid task ID");
     }
 
     const task = await TaskModel.findById(taskId).exec();
     if (!task) throw createHttpError(404, "Task not found");
 
-    if (task.userId.toString() !== req.user._id.toString()) {
+    if (task.userId.toString() !== req.user.userId.toString()) {
       throw createHttpError(403, "Unauthorized to modify this task");
     }
 
@@ -72,6 +72,7 @@ export const updateTask = async (
     task.isCompleted = isCompleted ?? task.isCompleted;
 
     const updatedTask = await task.save();
+
     res.status(200).json(updatedTask);
   } catch (error) {
     next(error);
@@ -87,18 +88,19 @@ export const deleteTask = async (
   const taskId = req.params.taskId;
 
   try {
-    if (!mongoose.isValidObjectId(taskId)) {
+    if (!isValidObjectId(taskId)) {
       throw createHttpError(400, "Invalid task ID");
     }
 
     const task = await TaskModel.findById(taskId).exec();
     if (!task) throw createHttpError(404, "Task not found");
 
-    if (task.userId.toString() !== req.user._id.toString()) {
+    if (task.userId.toString() !== req.user.userId.toString()) {
       throw createHttpError(403, "Unauthorized to delete this task");
     }
 
     await task.deleteOne();
+
     res.sendStatus(204);
   } catch (error) {
     next(error);
@@ -114,14 +116,14 @@ export const toggleComplete = async (
   const taskId = req.params.taskId;
 
   try {
-    if (!mongoose.isValidObjectId(taskId)) {
+    if (!isValidObjectId(taskId)) {
       throw createHttpError(400, "Invalid task ID");
     }
 
     const task = await TaskModel.findById(taskId).exec();
     if (!task) throw createHttpError(404, "Task not found");
 
-    if (task.userId.toString() !== req.user._id.toString()) {
+    if (task.userId.toString() !== req.user.userId.toString()) {
       throw createHttpError(403, "Unauthorized to update this task");
     }
 

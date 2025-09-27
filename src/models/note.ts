@@ -1,17 +1,8 @@
-import mongoose, { InferSchemaType, Schema, model } from "mongoose";
-
-export interface INote extends Document {
-  userId: mongoose.Types.ObjectId;
-  title: string;
-  text?: string;
-  isPinned: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import mongoose, { Schema, model, InferSchemaType } from "mongoose";
 
 const noteSchema = new Schema(
   {
-    userId: { type: mongoose.Types.ObjectId, required: true },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     title: { type: String, required: true },
     text: { type: String },
     isPinned: { type: Boolean, default: false },

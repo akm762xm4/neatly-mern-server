@@ -1,8 +1,8 @@
 import express, { NextFunction, Request, Response } from "express";
 import notesRoutes from "./routes/NotesRoutes";
-import userRoutes from "./routes/UsersRoutes";
+import authRoutes from "./routes/authRoutes";
 import taskRoutes from "./routes/TaskRoutes";
-import overviewRoutes from "./routes/overviewRoutes";
+import dashboardRoutes from "./routes/dashboardRoutes";
 import { requiresAuth } from "./middlewares/requiresAuth";
 import morgan from "morgan";
 import cors from "cors";
@@ -24,10 +24,10 @@ app.use(morgan("dev"));
 
 app.use(express.json());
 
+app.use("/api/auth", authRoutes);
 app.use("/api/notes", requiresAuth, notesRoutes);
 app.use("/api/tasks", requiresAuth, taskRoutes);
-app.use("/api/overview", requiresAuth, overviewRoutes);
-app.use("/api/users", userRoutes);
+app.use("/api/dashboard", requiresAuth, dashboardRoutes);
 
 app.use((req, res, next) => {
   next(createHttpError(404, "Endpoint not Found !"));

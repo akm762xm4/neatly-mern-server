@@ -1,18 +1,7 @@
 // models/TaskModel.ts
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, model, InferSchemaType } from "mongoose";
 
-export interface ITask extends Document {
-  userId: mongoose.Types.ObjectId;
-  title: string;
-  description?: string;
-  isCompleted: boolean;
-  dueDate?: Date;
-  priority?: "low" | "medium" | "high";
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const taskSchema = new Schema<ITask>(
+const taskSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, required: true, ref: "User" },
     title: { type: String, required: true },
@@ -28,5 +17,9 @@ const taskSchema = new Schema<ITask>(
   { timestamps: true }
 );
 
-const TaskModel = mongoose.model<ITask>("Task", taskSchema);
+const TaskModel = mongoose.model("Task", taskSchema);
 export default TaskModel;
+
+taskSchema.index({ userId: 1, isCompleted: 1 });
+taskSchema.index({ userId: 1, priority: 1 });
+taskSchema.index({ userId: 1, dueDate: 1 });

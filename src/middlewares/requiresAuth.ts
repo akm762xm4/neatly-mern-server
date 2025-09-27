@@ -1,31 +1,34 @@
-import jwt from "jsonwebtoken";
-import User from "../models/user";
-import env from "../util/validateEnv";
-import { NextFunction, Request, Response } from "express";
-import createHttpError from "http-errors";
+import { Request, Response, NextFunction } from "express";
+import { verifyAccessToken } from "../util/jwtUtils";
+import { ObjectId } from "mongoose";
 
-export const requiresAuth = async (
-  req: Request,
+export interface AuthedRequest extends Request {
+  user?: { userId: ObjectId | string };
+}
+
+export const requiresAuth = (
+  req: AuthedRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const token = req.header("Authorization")?.replace("Bearer ", "");
+    const authHeader = req.headers.authorization;
+    if (!authHeader)
+      return res.status(401).json({ message: "No authorization header" });
 
-    if (!token) {
-      throw createHttpError(401, "Token Required!");
+    const parts = authHeader.split(" ");
+    if (parts.length !== 2 || parts[0] !== "Bearer")
+      return res.status(401).json({ message: "Invalid auth header" });
+
+    const token = parts[1];
+    try {
+      const payload = verifyAccessToken(token);
+      req.user = { userId: payload.userId };
+      return next();
+    } catch (err) {
+      return res.status(401).json({ message: "Invalid or expired token" });
     }
-
-    const decoded = jwt.verify(token, env.JWT_SECRET) as { id: string };
-
-    if (!decoded) {
-      throw createHttpError(400, "Invalid token!");
-    }
-
-    req.user = await User.findById(decoded.id).exec();
-
-    next();
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 };
