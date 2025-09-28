@@ -215,7 +215,7 @@ export const suggestTasksController = async (
       systemPrompt: `You are a helpful assistant. The user wrote the following note:
     "${note.text}"`,
       userPrompt: `Extract actionable tasks or to-dos from this note. 
-    Return them as a JSON array of objects, without extra commentary.
+    Return them as a valid parsable JSON array of objects, without extra commentary.
     Example:
     [{"title":"Buy groceries","description":"Milk, Bread, Eggs"},{"title":"Draft email to client","description":"Follow up on project status"},{"title":"Prepare project outline","description":"Include key milestones and deadlines"}]`,
     });
@@ -296,9 +296,9 @@ export const qaNoteController = async (
     const answer = await runOpenRouter({
       systemPrompt:
         "You are an assistant that answers questions based strictly on the provided note content. Do not invent facts outside the note.",
-      userPrompt: `Note Content:\n${note.text}\n\nQuestion: ${questions}\n\nAnswer clearly and concisely.Return Response in question-answer pair as a JSON array of object, without extra commentary.
+      userPrompt: `Note Content:\n${note.text}\n\nQuestion: ${questions}\n\nAnswer clearly and concisely.Return Response in question-answer pair as a valid parsable JSON array of object, without extra commentary.
     Example:
-    [{question:"Question-1",answer:"Answer-1"},{question:"Question-2",answer:"Answer-2"}]`,
+    [{"question":"Question-1",answer:"Answer-1"},{"question":"Question-2",answer:"Answer-2"}]`,
     });
 
     return res.json({ answer });
